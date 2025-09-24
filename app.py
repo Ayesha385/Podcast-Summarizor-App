@@ -27,3 +27,8 @@ if __name__ == "__main__":
     print("\n📝 Summarizing transcript...\n")
     summary = summarize_text(transcript)
     print("✅ Podcast Summary:\n", summary)
+
+    with open("summary", "a") as f:
+        f.write("summary")
+
+    print("summary automatically saved to summary")

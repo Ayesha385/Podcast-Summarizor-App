@@ -21,14 +21,16 @@ if __name__ == "__main__":
     print("🎙️ Transcribing audio...")
     transcript = transcribe_audio(file_path)
     
-    print("\n--- Transcript (first 300 characters) ---\n")
-    print(transcript[:300])   # sirf thoda sa transcript dikhana
+    print("\n--- Transcript (first 300 words) ---\n")
+    words = transcript.split()[:300]   # sirf 300 words lo
+    print(" ".join(words))
     
     print("\n📝 Summarizing transcript...\n")
     summary = summarize_text(transcript)
     print("✅ Podcast Summary:\n", summary)
 
-    with open("summary", "a") as f:
-        f.write("summary")
+    # Save summary automatically
+    with open("podcast_summary.txt", "w", encoding="utf-8") as f:
+        f.write(summary)
 
-    print("summary automatically saved to summary")
+    print("✅ Summary automatically saved to podcast_summary.txt")

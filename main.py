@@ -1,8 +1,14 @@
-rom fastapi import FastAPI, UploadFile, File
+import whisper
+from fastapi import FastAPI, UploadFile, File
 import uvicorn
+from transformers import pipeline   # ✅ yeh missing tha
 
 # Create FastAPI app
 app = FastAPI()
+
+# 🟢 Load models once (fast performance ke liye)
+whisper_model = whisper.load_model("base")
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 # 🟢 Home route (just to test if server works)
 @app.get("/")
@@ -18,27 +24,26 @@ async def summarize_podcast(file: UploadFile = File(...)):
     with open("temp_audio.mp3", "wb") as f:
         f.write(contents)
 
-    # 2. Call your transcription function
+    # 2. Transcribe audio
     transcript = transcribe_audio("temp_audio.mp3")
 
-    # 3. Call your summarizer function
+    # 3. Summarize transcript
     summary = summarize_text(transcript)
 
     # 4. Send result back as JSON
     return {"transcript": transcript, "summary": summary}
 
 
-# 🟢 Dummy transcription function
+# 🟢 Transcription function
 def transcribe_audio(file_path):
-    model = whisper.load_model("base")   # whisper model load karo
-    result = model.transcribe(file_path) # audio file ko text me badlo
+    result = whisper_model.transcribe(file_path)
     return result["text"]
 
-# 🟢 Dummy summarization function
+# 🟢 Summarization function
 def summarize_text(text):
-    summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
     summary = summarizer(text, max_length=120, min_length=40, do_sample=False)
     return summary[0]['summary_text']
+
 
 # 🟢 Run FastAPI server
 if __name__ == "__main__":

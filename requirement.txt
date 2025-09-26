@@ -2,3 +2,5 @@ openai-whisper
 transformers
 torch
 pydub
+uvicorn
+streamlit
